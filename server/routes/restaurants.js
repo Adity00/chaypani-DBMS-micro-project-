@@ -8,6 +8,7 @@ router.get('/', async (req, res) => {
         const restaurants = await Restaurant.find();
         res.json({ success: true, data: restaurants });
     } catch (error) {
+        console.error("GET /api/restaurants error:", error);
         res.status(500).json({ success: false, message: error.message });
     }
 });
@@ -21,6 +22,7 @@ router.get('/:id', async (req, res) => {
         }
         res.json({ success: true, data: restaurant });
     } catch (error) {
+        console.error("GET /api/restaurants/:id error:", error);
         res.status(500).json({ success: false, message: error.message });
     }
 });
@@ -31,6 +33,7 @@ router.post('/', async (req, res) => {
         const restaurant = await Restaurant.create(req.body);
         res.status(201).json({ success: true, data: restaurant });
     } catch (error) {
+        console.error("POST /api/restaurants error:", error);
         res.status(400).json({ success: false, message: error.message });
     }
 });
@@ -44,6 +47,7 @@ router.put('/:id', async (req, res) => {
         }
         res.json({ success: true, data: restaurant });
     } catch (error) {
+        console.error("PUT /api/restaurants/:id error:", error);
         res.status(400).json({ success: false, message: error.message });
     }
 });
@@ -57,6 +61,7 @@ router.delete('/:id', async (req, res) => {
         }
         res.json({ success: true, data: restaurant });
     } catch (error) {
+        console.error("DELETE /api/restaurants/:id error:", error);
         res.status(400).json({ success: false, message: error.message });
     }
 });
