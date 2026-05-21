@@ -118,9 +118,11 @@ export default function Home() {
                         <span className="px-3 py-1 bg-red-500/90 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg backdrop-blur-sm shadow-lg">Closed</span>
                       )}
                     </div>
-                    <div className="flex items-center justify-center h-full text-5xl group-hover:scale-110 transition-transform duration-500">
-                      🥘
-                    </div>
+                    <img
+                      src={`https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800&food=${restaurant.cuisine}`}
+                      alt={restaurant.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
                   </div>
                   <div className="p-8">
                     <div className="flex justify-between items-center mb-3">

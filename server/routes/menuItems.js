@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 const MenuItem = require('../models/MenuItem');
 
-// GET /api/menuitems?restaurantId=xxx
+const { protect, authorize } = require('../middleware/authMiddleware');
+
+// GET /api/menuitems?restaurantId=xxx - Public
 router.get('/', async (req, res) => {
     try {
         const { restaurantId } = req.query;
@@ -14,8 +16,8 @@ router.get('/', async (req, res) => {
     }
 });
 
-// POST /api/menuitems
-router.post('/', async (req, res) => {
+// POST /api/menuitems - Private/Admin
+router.post('/', protect, authorize('admin'), async (req, res) => {
     try {
         const menuItem = await MenuItem.create(req.body);
         res.status(201).json({ success: true, data: menuItem });
@@ -24,8 +26,8 @@ router.post('/', async (req, res) => {
     }
 });
 
-// PUT /api/menuitems/:id
-router.put('/:id', async (req, res) => {
+// PUT /api/menuitems/:id - Private/Admin
+router.put('/:id', protect, authorize('admin'), async (req, res) => {
     try {
         const menuItem = await MenuItem.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!menuItem) {
@@ -37,8 +39,8 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// DELETE /api/menuitems/:id
-router.delete('/:id', async (req, res) => {
+// DELETE /api/menuitems/:id - Private/Admin
+router.delete('/:id', protect, authorize('admin'), async (req, res) => {
     try {
         const menuItem = await MenuItem.findByIdAndDelete(req.params.id);
         if (!menuItem) {

@@ -1,10 +1,20 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
+import toast from 'react-hot-toast';
 
 export default function AdminPage() {
     const [activeTab, setActiveTab] = useState('restaurants');
+    const router = useRouter();
+
+    useEffect(() => {
+        const token = localStorage.getItem('chaypani_token');
+        if (!token) {
+            router.push('/login');
+        }
+    }, []);
 
     return (
         <div className="max-w-7xl mx-auto pb-20">
@@ -65,11 +75,12 @@ function RestaurantsTab() {
             } else {
                 await api.post('/api/restaurants', formData);
             }
+            toast.success(editingId ? "Restaurant updated!" : "Restaurant registered!");
             setFormData({ name: '', cuisine: '', address: '', phone: '', isOpen: true });
             setEditingId(null);
             fetchRestaurants();
         } catch (e) {
-            alert("Error saving restaurant");
+            toast.error("Failed to save restaurant");
         }
     };
 
@@ -77,8 +88,9 @@ function RestaurantsTab() {
         if (!confirm('Are you sure?')) return;
         try {
             await api.delete(`/api/restaurants/${id}`);
+            toast.success("Restaurant deleted");
             fetchRestaurants();
-        } catch (e) { alert("Error deleting restaurant"); }
+        } catch (e) { toast.error("Error deleting restaurant"); }
     };
 
     const handleEdit = (r) => {
@@ -207,17 +219,19 @@ function MenuItemsTab() {
         e.preventDefault();
         try {
             await api.post('/api/menuitems', { ...formData, restaurantId: selectedRestId, price: Number(formData.price) });
+            toast.success("Item added to menu");
             setFormData({ name: '', price: '', category: '', isVeg: false });
             fetchMenuItems();
-        } catch (e) { alert("Error saving item"); }
+        } catch (e) { toast.error("Error saving item"); }
     };
 
     const handleDelete = async (id) => {
         if (!confirm('Are you sure?')) return;
         try {
             await api.delete(`/api/menuitems/${id}`);
+            toast.success("Item removed");
             fetchMenuItems();
-        } catch (e) { alert("Error deleting item"); }
+        } catch (e) { toast.error("Error deleting item"); }
     };
 
     return (
@@ -319,8 +333,9 @@ function OrdersTab() {
     const handleStatusChange = async (id, status) => {
         try {
             await api.put(`/api/orders/${id}/status`, { status });
+            toast.success(`Order ${status}`);
             fetchOrders();
-        } catch (e) { alert("Error changing status"); }
+        } catch (e) { toast.error("Error changing status"); }
     };
 
     return (
@@ -355,8 +370,8 @@ function OrdersTab() {
                             <td className="py-6 px-8">
                                 <select
                                     className={`border-none rounded-xl px-4 py-2 text-xs font-bold uppercase tracking-wider appearance-none focus:ring-0 cursor-pointer ${o.status === 'pending' ? 'bg-amber-100 text-amber-700' :
-                                            o.status === 'confirmed' ? 'bg-blue-100 text-blue-700' :
-                                                'bg-emerald-100 text-emerald-700'
+                                        o.status === 'confirmed' ? 'bg-blue-100 text-blue-700' :
+                                            'bg-emerald-100 text-emerald-700'
                                         }`}
                                     value={o.status}
                                     onChange={(e) => handleStatusChange(o._id, e.target.value)}

@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const Restaurant = require('../models/Restaurant');
+const { protect, authorize } = require('../middleware/authMiddleware');
 
-// GET /api/restaurants
+// GET /api/restaurants - Public
 router.get('/', async (req, res) => {
     try {
         const restaurants = await Restaurant.find();
@@ -13,7 +14,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// GET /api/restaurants/:id
+// GET /api/restaurants/:id - Public
 router.get('/:id', async (req, res) => {
     try {
         const restaurant = await Restaurant.findById(req.params.id);
@@ -27,8 +28,8 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// POST /api/restaurants
-router.post('/', async (req, res) => {
+// POST /api/restaurants - Private/Admin
+router.post('/', protect, authorize('admin'), async (req, res) => {
     try {
         const restaurant = await Restaurant.create(req.body);
         res.status(201).json({ success: true, data: restaurant });
@@ -38,8 +39,8 @@ router.post('/', async (req, res) => {
     }
 });
 
-// PUT /api/restaurants/:id
-router.put('/:id', async (req, res) => {
+// PUT /api/restaurants/:id - Private/Admin
+router.put('/:id', protect, authorize('admin'), async (req, res) => {
     try {
         const restaurant = await Restaurant.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!restaurant) {
@@ -52,8 +53,8 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// DELETE /api/restaurants/:id
-router.delete('/:id', async (req, res) => {
+// DELETE /api/restaurants/:id - Private/Admin
+router.delete('/:id', protect, authorize('admin'), async (req, res) => {
     try {
         const restaurant = await Restaurant.findByIdAndDelete(req.params.id);
         if (!restaurant) {

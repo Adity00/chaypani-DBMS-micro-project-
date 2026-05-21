@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order');
 
-// GET /api/orders
-router.get('/', async (req, res) => {
+const { protect, authorize } = require('../middleware/authMiddleware');
+
+// GET /api/orders - Private/Admin
+router.get('/', protect, authorize('admin'), async (req, res) => {
     try {
         const orders = await Order.find().populate('restaurantId').sort({ createdAt: -1 });
         res.json({ success: true, data: orders });
@@ -12,7 +14,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// POST /api/orders
+// POST /api/orders - Public (Place Order)
 router.post('/', async (req, res) => {
     try {
         const order = await Order.create(req.body);
@@ -22,8 +24,8 @@ router.post('/', async (req, res) => {
     }
 });
 
-// PUT /api/orders/:id/status
-router.put('/:id/status', async (req, res) => {
+// PUT /api/orders/:id/status - Private/Admin
+router.put('/:id/status', protect, authorize('admin'), async (req, res) => {
     try {
         const order = await Order.findByIdAndUpdate(
             req.params.id,

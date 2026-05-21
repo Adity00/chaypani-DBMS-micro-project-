@@ -36,6 +36,7 @@ const connectDB = async () => {
 app.use('/api/restaurants', require('./routes/restaurants'));
 app.use('/api/menuitems', require('./routes/menuItems'));
 app.use('/api/orders', require('./routes/orders'));
+app.use('/api/auth', require('./routes/auth'));
 
 // Health check endpoint
 app.get('/', (req, res) => {

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
+import toast from 'react-hot-toast';
 
 export default function RestaurantPage({ params }) {
     const router = useRouter();
@@ -47,7 +48,7 @@ export default function RestaurantPage({ params }) {
 
     const addToCart = (item) => {
         if (!restaurant.isOpen) {
-            alert("This restaurant is currently closed.");
+            toast.error("This restaurant is currently closed.");
             return;
         }
 
@@ -75,6 +76,7 @@ export default function RestaurantPage({ params }) {
         }
 
         localStorage.setItem('chaypani_cart', JSON.stringify(cart));
+        toast.success(`${item.name} added to cart!`);
         updateCartCount();
     };
 
@@ -95,9 +97,13 @@ export default function RestaurantPage({ params }) {
     return (
         <div className="relative pb-24 space-y-12">
             {/* Restaurant Header */}
-            <div className="glass-card p-12 rounded-[3rem] overflow-hidden relative">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-orange-100 rounded-full -mr-20 -mt-20 opacity-50"></div>
-                <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div className="glass-card p-12 rounded-[3rem] overflow-hidden relative min-h-[300px] flex items-center">
+                <div
+                    className="absolute inset-0 bg-cover bg-center opacity-10"
+                    style={{ backgroundImage: `url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=1000')` }}
+                ></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-orange-100 rounded-full -mr-20 -mt-20 opacity-30"></div>
+                <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-6 w-full">
                     <div className="space-y-4">
                         <div className="flex items-center gap-3">
                             {restaurant.isOpen ? (
